@@ -25,3 +25,10 @@ void APrimaryRifle::Tick(float DeltaTime)
 
 }
 
+void APrimaryRifle::FireWeapon()
+{
+	FHitResult hitResult;
+	//call function on for each bullet - raycast is held here
+	//GetWorld()->LineTraceSingleByChannel(hitResult, , )
+}
+
