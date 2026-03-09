@@ -14,7 +14,12 @@ class APrimaryRifle : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APrimaryRifle();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UStaticMeshComponent* BarrelTipComponent;
+	//Raycasts for bullets
+	//accuracy ^ goes along with that
+	//speed - stored locally, used to affect player speed
+	//magazine
+	UFUNCTION(BlueprintCallable) void FireWeapon();
+	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,13 +28,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
-	
-private:
-	//Raycasts for bullets
-	//accuracy ^ goes along with that
-	//speed - stored locally, used to affect player speed
-	//magazine
-	UFUNCTION(BlueprintCallable) void FireWeapon();
 
 };
