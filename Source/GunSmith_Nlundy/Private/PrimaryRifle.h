@@ -19,7 +19,19 @@ public:
 	//speed - stored locally, used to affect player speed
 	//magazine
 	UFUNCTION(BlueprintCallable) void FireWeapon();
+	UFUNCTION(BlueprintCallable) void FullAutoFire();
+	UFUNCTION(BlueprintCallable) void CancelFullAutoFire();
+	UFUNCTION(BlueprintCallable) void DecrementAmmo();
+	UFUNCTION(BlueprintCallable) void SetAmmoMax();
+	UFUNCTION(BlueprintCallable) void ManualReload();
+	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation);
 	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
+	UPROPERTY(EditAnywhere) int CurrentAmmo = 0;
+	UPROPERTY(EditAnywhere) int MaxAmmo = 50;
+	UPROPERTY(EditAnywhere) float FireRate = 0.1f; //In Seconds
+	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
+	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
 
 protected:
 	// Called when the game starts or when spawned
