@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UW_UserInterface.generated.h"
 
+class APrimaryRifle;
+class UTextBlock;
 /**
  * 
  */
@@ -13,5 +15,11 @@ UCLASS()
 class UUW_UserInterface : public UUserWidget
 {
 	GENERATED_BODY()
+	
+public:
+	virtual void NativeConstruct() override;
+	UFUNCTION() void UpdateAmmoText(int32 NewAmmoCount);
+	UPROPERTY(meta = (BindWidget)) UTextBlock* AmmoText;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) APrimaryRifle* PlayerGun;
 	
 };

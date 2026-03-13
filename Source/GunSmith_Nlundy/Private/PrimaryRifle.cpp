@@ -134,11 +134,13 @@ void APrimaryRifle::DecrementAmmo()
 {
 	CurrentAmmo--;
 	CurrentAmmo = FMath::Clamp(CurrentAmmo, 0,MaxAmmo);
+	OnAmmoChanged.Broadcast(CurrentAmmo);
 }
 
 void APrimaryRifle::SetAmmoMax()
 {
 	CurrentAmmo = MaxAmmo;
+	OnAmmoChanged.Broadcast(CurrentAmmo);
 }
 
 void APrimaryRifle::ManualReload()

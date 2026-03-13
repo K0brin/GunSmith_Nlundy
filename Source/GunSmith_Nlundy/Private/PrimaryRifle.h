@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "PrimaryRifle.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChanged, int32, NewAmmoCount);
+
 UCLASS()
 class APrimaryRifle : public AActor
 {
@@ -32,6 +34,7 @@ public:
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
 	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
+	UPROPERTY(BlueprintAssignable) FOnAmmoChanged OnAmmoChanged; 
 
 protected:
 	// Called when the game starts or when spawned
