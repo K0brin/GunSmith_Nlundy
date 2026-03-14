@@ -21,7 +21,6 @@ public:
 	UPROPERTY(EditAnywhere) int32 CurrentHealth = MaxHealth;
 	UPROPERTY(EditAnywhere) float ReviveSpeed  = 10;
 	UPROPERTY(EditAnywhere) bool Invincible = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UStaticMeshComponent* TargetComponent;
 	
 private:
 	FTimerHandle timerHandle;

@@ -35,7 +35,6 @@ bool ATarget::TakeDamage(int32 damage)
 		{
 			//Target is dead
 			Invincible = true;
-			TargetComponent->SetVisibility(false);
 			GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &ATarget::Revive, ReviveSpeed,false);
 		}
 		return true; //did damage
@@ -47,6 +46,5 @@ void ATarget::Revive()
 {
 	CurrentHealth = MaxHealth;
 	Invincible = false;
-	TargetComponent->SetVisibility(true);
 	
 }

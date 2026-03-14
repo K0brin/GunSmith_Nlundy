@@ -11,6 +11,7 @@ void UUW_UserInterface::NativeConstruct()
 	Super::NativeConstruct();
 	
 	AmmoText->SetText(FText::AsNumber(PlayerGun->CurrentAmmo));
+	DamageText->SetText(FText::AsNumber(0));
 	
 	if (PlayerGun)
 	{
