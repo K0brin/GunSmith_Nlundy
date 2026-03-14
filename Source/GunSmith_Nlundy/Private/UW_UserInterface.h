@@ -20,7 +20,7 @@ public:
 	virtual void NativeConstruct() override;
 	UFUNCTION() void UpdateAmmoText(int32 NewAmmoCount);
 	UPROPERTY(meta = (BindWidget)) UTextBlock* AmmoText;
-	UPROPERTY(meta = (BindWidget)) UTextBlock* DamageText;
+	//UPROPERTY(meta = (BindWidget)) UTextBlock* DamageText;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) APrimaryRifle* PlayerGun;
 	
 };

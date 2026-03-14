@@ -10,11 +10,9 @@ void UUW_UserInterface::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	AmmoText->SetText(FText::AsNumber(PlayerGun->CurrentAmmo));
-	DamageText->SetText(FText::AsNumber(0));
-	
 	if (PlayerGun)
 	{
+		AmmoText->SetText(FText::AsNumber(PlayerGun->CurrentAmmo));
 		PlayerGun->OnAmmoChanged.AddDynamic(this, &UUW_UserInterface::UpdateAmmoText);
 	}
 	else
