@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TextRenderComponent.h"
 #include "GameFramework/Actor.h"
 #include "PrimaryRifle.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChanged, int32, NewAmmoCount);
+
+class UTextRenderComponent;
 
 UCLASS()
 class APrimaryRifle : public AActor
@@ -26,7 +29,7 @@ public:
 	UFUNCTION(BlueprintCallable) void DecrementAmmo();
 	UFUNCTION(BlueprintCallable) void SetAmmoMax();
 	UFUNCTION(BlueprintCallable) void ManualReload();
-	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation);
+	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation, FHitResult hitResult);
 	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
 	UPROPERTY(EditAnywhere) int CurrentAmmo = 0;
 	UPROPERTY(EditAnywhere) int MaxAmmo = 50;
@@ -34,7 +37,8 @@ public:
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
 	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
-	UPROPERTY(BlueprintAssignable) FOnAmmoChanged OnAmmoChanged; 
+	UPROPERTY(BlueprintAssignable) FOnAmmoChanged OnAmmoChanged;
+	UPROPERTY(EditAnywhere) int Damage = 10;
 
 protected:
 	// Called when the game starts or when spawned

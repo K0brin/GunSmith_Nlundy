@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ATarget();
 	
-	UFUNCTION(BlueprintCallable) bool TakeDamage(int32 damage);
+	UFUNCTION(BlueprintCallable) bool RecieveDamage(int damage);
 	UFUNCTION(BlueprintCallable) void Revive();
 	UPROPERTY(EditAnywhere) int32 MaxHealth = 100;
 	UPROPERTY(EditAnywhere) int32 CurrentHealth = MaxHealth;

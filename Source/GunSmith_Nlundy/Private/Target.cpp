@@ -25,7 +25,7 @@ void ATarget::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-bool ATarget::TakeDamage(int32 damage)
+bool ATarget::RecieveDamage(int damage)
 {
 	
 	if (!Invincible)

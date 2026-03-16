@@ -3,9 +3,11 @@
 
 #include "PrimaryRifle.h"
 
+#include "Target.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextBlock.h"
+#include "Engine/TextRenderActor.h"
 
 // Sets default values
 APrimaryRifle::APrimaryRifle()
@@ -74,7 +76,7 @@ void APrimaryRifle::FireWeapon()
 	
 		//TODO:Second Raycast destination is wrong half of the time
 		FHitResult hitResult1;
-		FHitResult hitResult;
+		//FHitResult hitResult;
 		FVector lineTraceStart = barrelTipLocation;
 		FVector playerLineStart = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>()->GetComponentLocation();
 		//calculating dynamic forward
@@ -84,12 +86,12 @@ void APrimaryRifle::FireWeapon()
 		GetWorld()->LineTraceSingleByChannel (hitResult1, playerLineStart, lineTraceEnd,ECC_Visibility, params);
 		//DrawDebugLine(GetWorld(),playerLineStart, hitResult1.ImpactPoint, FColor::Green, false, 1.0f, 0, 2.0f);
 		//raycast from gun
-		GetWorld()->LineTraceSingleByChannel(hitResult, lineTraceStart, hitResult1.ImpactPoint,ECC_Visibility, params);
+		//GetWorld()->LineTraceSingleByChannel(hitResult, lineTraceStart, hitResult1.ImpactPoint,ECC_Visibility, params);
 		//DrawDebugLine(GetWorld(),lineTraceStart, hitResult.ImpactPoint, FColor::Red, false, 1.0f, 0, 2.0f);
-		AActor* hitActor1 = hitResult1.GetActor();
-		AActor* hitActor = hitResult.GetActor();
+		AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
+		//AActor* hitActor = hitResult.GetActor();
 	
-		SpawnHitEffect(hitResult.Location);
+		SpawnHitEffect(hitResult1.Location, hitResult1);
 	
 		DecrementAmmo();
 		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %i"), CurrentAmmo);
@@ -98,32 +100,20 @@ void APrimaryRifle::FireWeapon()
 		/*if (CurrentAmmo <= 0 )
 		{
 			ManualReload();
-		}*/
+		}
 	
-		/*if (hitActor1)
+		if (hitResult1.GetActor())
 		{
-			FString actor1Name = hitActor1->GetName();
+			/*FString actor1Name = hitActor1->GetName();
 			UE_LOG(LogTemp, Warning, TEXT("Hit1 Actor: %s"), *actor1Name);
 			UE_LOG(LogTemp, Warning, TEXT("Hit1 Location: %s"), *hitResult1.Location.ToString());
+
+			UE_LOG(LogTemp, Warning, TEXT("Hit actor class: %s"), *hitResult1.GetActor()->GetClass()->GetName());
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Hit1 Nothing"));
 			UE_LOG(LogTemp, Warning, TEXT("Hit1 Location: %s"), *hitResult1.Location.ToString());
-			
-		}
-		
-		if (hitActor)
-		{
-			FString actorName = hitActor->GetName();
-			UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *actorName);
-			UE_LOG(LogTemp, Warning, TEXT("Hit Location: %s"), *hitResult.Location.ToString());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit Nothing"));
-			UE_LOG(LogTemp, Warning, TEXT("Hit Location: %s"), *hitResult.Location.ToString());
-			
 		}*/
 	}
 	
@@ -151,9 +141,35 @@ void APrimaryRifle::ManualReload()
 	UE_LOG(LogTemp, Warning, TEXT("Ammo Set To Max; Current Ammo: %i"), CurrentAmmo);
 }
 
-void APrimaryRifle::SpawnHitEffect(FVector spawnLocation)
+void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 {
-	AActor* hitEffect = GetWorld()->SpawnActor<AActor>(HitEffectToSpawn, spawnLocation, FRotator::ZeroRotator);
-	hitEffect->SetLifeSpan(3.0f);
+	if (ATarget* hitActor = Cast<ATarget>(hitResult.GetActor()))
+	{
+		if (hitActor->RecieveDamage(Damage))
+		{
+			//AActor* hitEffect = GetWorld()->SpawnActor<AActor>(HitEffectToSpawn, spawnLocation, FRotator::ZeroRotator);
+			//hitEffect->SetLifeSpan(3.0f);
+			//TODO: Make Spawn Rotation the same as the target's, and offset the position towards the player slightly
+			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, FRotator::ZeroRotator);
+			//DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
+			DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
+			//DamageText->GetTextRender()->SetWorldSize(100.0f);
+			DamageText->SetLifeSpan(3.0f);
+			
+		}
+		else
+		{
+			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, FRotator::ZeroRotator);
+			DamageText->GetTextRender()->SetText(FText::AsNumber(0));
+			//DamageText->GetTextRender()->SetWorldSize(100.0f);
+			DamageText->SetLifeSpan(3.0f);
+		}
+		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit Object is not ATarget"));
+	}
+	
 }
 
