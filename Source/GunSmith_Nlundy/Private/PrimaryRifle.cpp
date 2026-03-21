@@ -52,9 +52,16 @@ void APrimaryRifle::CancelFullAutoFire()
 void APrimaryRifle::FireWeapon()
 {
 	
-	if (CurrentAmmo <= 0)
+	if (CurrentAmmo <= 0 || IsReloading)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Gun is Out of Ammo"));
+		if (IsReloading)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Gun is Reloading"))
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Gun is Out of Ammo"))
+		}
 	}
 	else
 	{
@@ -131,14 +138,16 @@ void APrimaryRifle::SetAmmoMax()
 {
 	CurrentAmmo = MaxAmmo;
 	OnAmmoChanged.Broadcast(CurrentAmmo);
+	IsReloading = false;
+	UE_LOG(LogTemp, Warning, TEXT("Ammo Set To Max; Current Ammo: %i"), CurrentAmmo);
 }
 
 void APrimaryRifle::ManualReload()
 {
 	//call reload animation
-	//wait time of reload
-	SetAmmoMax();
-	UE_LOG(LogTemp, Warning, TEXT("Ammo Set To Max; Current Ammo: %i"), CurrentAmmo);
+	//waiting time of reload]
+	IsReloading = true;
+	GetWorld()->GetTimerManager().SetTimer(timerHandle2, this, &APrimaryRifle::SetAmmoMax, ReloadSpeed,false);
 }
 
 void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)

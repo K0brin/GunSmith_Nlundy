@@ -20,6 +20,6 @@ public:
 	virtual void NativeConstruct() override;
 	UFUNCTION() void UpdateAmmoText(int32 NewAmmoCount);
 	UPROPERTY(meta = (BindWidget)) UTextBlock* AmmoText;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) APrimaryRifle* PlayerGun;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) APrimaryRifle* MasterGun;
 	
 };
