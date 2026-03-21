@@ -36,6 +36,7 @@ bool ATarget::RecieveDamage(int damage)
 			//Target is dead
 			Invincible = true;
 			GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &ATarget::Revive, ReviveSpeed,false);
+			return false;
 		}
 		return true; //did damage
 	}

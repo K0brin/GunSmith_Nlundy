@@ -17,9 +17,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable) bool RecieveDamage(int damage);
 	UFUNCTION(BlueprintCallable) void Revive();
-	UPROPERTY(EditAnywhere) int32 MaxHealth = 100;
-	UPROPERTY(EditAnywhere) int32 CurrentHealth = MaxHealth;
-	UPROPERTY(EditAnywhere) float ReviveSpeed  = 10;
+	UPROPERTY(EditAnywhere) int MaxHealth = 100;
+	UPROPERTY(EditAnywhere) int CurrentHealth = MaxHealth;
+	UPROPERTY(EditAnywhere) float ReviveSpeed  = 5;
 	UPROPERTY(EditAnywhere) bool Invincible = false;
 	
 private:

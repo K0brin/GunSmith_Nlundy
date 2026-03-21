@@ -39,6 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
 	UPROPERTY(BlueprintAssignable) FOnAmmoChanged OnAmmoChanged;
 	UPROPERTY(EditAnywhere) int Damage = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bAiming;
 
 protected:
 	// Called when the game starts or when spawned

@@ -145,23 +145,19 @@ void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 {
 	if (ATarget* hitActor = Cast<ATarget>(hitResult.GetActor()))
 	{
+		FRotator textRotation(0,180,0);
+		spawnLocation = FVector(spawnLocation.X - 10, spawnLocation.Y, spawnLocation.Z);
 		if (hitActor->RecieveDamage(Damage))
 		{
-			//AActor* hitEffect = GetWorld()->SpawnActor<AActor>(HitEffectToSpawn, spawnLocation, FRotator::ZeroRotator);
-			//hitEffect->SetLifeSpan(3.0f);
-			//TODO: Make Spawn Rotation the same as the target's, and offset the position towards the player slightly
-			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, FRotator::ZeroRotator);
-			//DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
+			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
 			DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
-			//DamageText->GetTextRender()->SetWorldSize(100.0f);
 			DamageText->SetLifeSpan(3.0f);
 			
 		}
 		else
 		{
-			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, FRotator::ZeroRotator);
-			DamageText->GetTextRender()->SetText(FText::AsNumber(0));
-			//DamageText->GetTextRender()->SetWorldSize(100.0f);
+			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
+			DamageText->GetTextRender()->SetText(FText::FromString("Dead"));
 			DamageText->SetLifeSpan(3.0f);
 		}
 		
