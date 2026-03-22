@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere) int CurrentAmmo = 0;
 	UPROPERTY(EditAnywhere) int MaxAmmo = 25;
 	UPROPERTY(EditAnywhere) float FireRate = 0.1f; //In Seconds
-	UPROPERTY(EditAnywhere) float ReloadSpeed = 3.0f; //In Seconds
+	UPROPERTY(EditAnywhere) float ReloadSpeed = 1.5f; //In Seconds
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle2;
 	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;

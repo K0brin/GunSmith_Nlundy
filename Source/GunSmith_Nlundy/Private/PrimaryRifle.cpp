@@ -93,13 +93,13 @@ void APrimaryRifle::FireWeapon()
 		//call function on for each bullet - raycast is held here
 		//raycast from center of player (to get target position)
 		GetWorld()->LineTraceSingleByChannel (hitResult1, playerLineStart, lineTraceEnd,ECC_Visibility, params);
-		AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
+		//AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
 		//DrawDebugLine(GetWorld(),playerLineStart, hitResult1.ImpactPoint, FColor::Green, false, 1.0f, 0, 2.0f);
 		//raycast from gun
 		//GetWorld()->LineTraceSingleByChannel(hitResult, lineTraceStart, hitResult1.ImpactPoint,ECC_Visibility, params);
 		//DrawDebugLine(GetWorld(),lineTraceStart, hitResult.ImpactPoint, FColor::Red, false, 1.0f, 0, 2.0f);
 		//AActor* hitActor = hitResult.GetActor();
-	
+		
 		SpawnHitEffect(hitResult1.ImpactPoint, hitResult1);
 	
 		DecrementAmmo();
@@ -162,16 +162,16 @@ void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 		spawnLocation = FVector(spawnLocation.X - 10, spawnLocation.Y, spawnLocation.Z);
 		if (hitActor->RecieveDamage(Damage))
 		{
-			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
+			/*ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
 			DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
-			DamageText->SetLifeSpan(3.0f);
+			DamageText->SetLifeSpan(3.0f);*/
 			
 		}
 		else
 		{
-			ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
+			/*ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
 			DamageText->GetTextRender()->SetText(FText::FromString("Dead"));
-			DamageText->SetLifeSpan(3.0f);
+			DamageText->SetLifeSpan(3.0f);*/
 		}
 	}
 	else
