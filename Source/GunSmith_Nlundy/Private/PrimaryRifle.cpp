@@ -61,6 +61,7 @@ void APrimaryRifle::FireWeapon()
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Gun is Out of Ammo"))
+			recoilCount = 0;
 		}
 	}
 	else
@@ -87,18 +88,19 @@ void APrimaryRifle::FireWeapon()
 		FVector lineTraceStart = barrelTipLocation;
 		FVector playerLineStart = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>()->GetComponentLocation();
 		//calculating dynamic forward
-		FVector lineTraceEnd = lineTraceStart + (GetActorForwardVector() * -LineTraceDistance);
+		FVector lineTraceEnd = lineTraceStart + (BulletRecoilDirection() * -LineTraceDistance);
+		//edit the direction of the cast for recoil
 		//call function on for each bullet - raycast is held here
 		//raycast from center of player (to get target position)
 		GetWorld()->LineTraceSingleByChannel (hitResult1, playerLineStart, lineTraceEnd,ECC_Visibility, params);
+		AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
 		//DrawDebugLine(GetWorld(),playerLineStart, hitResult1.ImpactPoint, FColor::Green, false, 1.0f, 0, 2.0f);
 		//raycast from gun
 		//GetWorld()->LineTraceSingleByChannel(hitResult, lineTraceStart, hitResult1.ImpactPoint,ECC_Visibility, params);
 		//DrawDebugLine(GetWorld(),lineTraceStart, hitResult.ImpactPoint, FColor::Red, false, 1.0f, 0, 2.0f);
-		AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
 		//AActor* hitActor = hitResult.GetActor();
 	
-		SpawnHitEffect(hitResult1.Location, hitResult1);
+		SpawnHitEffect(hitResult1.ImpactPoint, hitResult1);
 	
 		DecrementAmmo();
 		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %i"), CurrentAmmo);
@@ -147,11 +149,13 @@ void APrimaryRifle::ManualReload()
 	//call reload animation
 	//waiting time of reload]
 	IsReloading = true;
+	recoilCount = 0;
 	GetWorld()->GetTimerManager().SetTimer(timerHandle2, this, &APrimaryRifle::SetAmmoMax, ReloadSpeed,false);
 }
 
 void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 {
+	//Damage Numbers
 	if (ATarget* hitActor = Cast<ATarget>(hitResult.GetActor()))
 	{
 		FRotator textRotation(0,180,0);
@@ -169,12 +173,35 @@ void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 			DamageText->GetTextRender()->SetText(FText::FromString("Dead"));
 			DamageText->SetLifeSpan(3.0f);
 		}
-		
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit Object is not ATarget"));
 	}
 	
+	//HitEffect
+	if (hitResult.GetActor())
+	{
+		AActor* hitEffect = GetWorld()->SpawnActor<AActor>(HitEffectToSpawn, hitResult.ImpactPoint, FRotator::ZeroRotator);
+		hitEffect->SetLifeSpan(3.0f);
+	}
+	
+}
+
+FVector APrimaryRifle::BulletRecoilDirection()
+{
+	if (recoilCount <= MaxAmmo - 1)
+	{
+		//take spawn position -> edit the value depending on what index of bullet is fired in a array, reset index on lmb up, reload, or mag empty
+		FVector direction =(GetActorForwardVector() + RecoilArray[recoilCount]).GetSafeNormal();
+		recoilCount++;
+		//return direction to be used in raycast
+		return direction;
+	}
+	else
+	{
+		recoilCount = 0;
+		return BulletRecoilDirection();
+	}
 }
 

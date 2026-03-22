@@ -30,9 +30,10 @@ public:
 	UFUNCTION(BlueprintCallable) void SetAmmoMax();
 	UFUNCTION(BlueprintCallable) void ManualReload();
 	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation, FHitResult hitResult);
+	UFUNCTION(BlueprintCallable) FVector BulletRecoilDirection(); 
 	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
 	UPROPERTY(EditAnywhere) int CurrentAmmo = 0;
-	UPROPERTY(EditAnywhere) int MaxAmmo = 50;
+	UPROPERTY(EditAnywhere) int MaxAmmo = 25;
 	UPROPERTY(EditAnywhere) float FireRate = 0.1f; //In Seconds
 	UPROPERTY(EditAnywhere) float ReloadSpeed = 3.0f; //In Seconds
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
@@ -43,6 +44,8 @@ public:
 	UPROPERTY(EditAnywhere) int Damage = 10;
 	UPROPERTY(BlueprintReadWrite) bool IsAiming = false;
 	UPROPERTY(EditAnywhere) bool IsReloading = false;
+	UPROPERTY(EditAnywhere, Category = "Arrays") TArray<FVector> RecoilArray; //Holds vector offsets from original hit positon "(0,0)"
+	UPROPERTY(BlueprintReadWrite) int recoilCount = 0;
 
 protected:
 	// Called when the game starts or when spawned
