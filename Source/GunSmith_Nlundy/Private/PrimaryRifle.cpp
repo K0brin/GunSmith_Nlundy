@@ -21,6 +21,7 @@ APrimaryRifle::APrimaryRifle()
 void APrimaryRifle::BeginPlay()
 {
 	Super::BeginPlay();
+	InitializeStats();
 	SetAmmoMax();
 	
 }
@@ -203,5 +204,16 @@ FVector APrimaryRifle::BulletRecoilDirection()
 		recoilCount = 0;
 		return BulletRecoilDirection();
 	}
+}
+
+void APrimaryRifle::InitializeStats()
+{
+	Damage = GunStats.Damage;
+	FireRate = GunStats.FireRate;
+	//movement speed
+	//aim movement speed
+	RecoilArray = GunStats.RecoilArray;
+	MaxAmmo = GunStats.AmmoCapacity;
+	ReloadSpeed = GunStats.ReloadSpeed;
 }
 
