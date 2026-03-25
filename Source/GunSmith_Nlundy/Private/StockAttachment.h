@@ -15,7 +15,7 @@ class UStockAttachment : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MovementSpeed = 75.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AimWalkingSpeed = 50.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MovementSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AimWalkingSpeed = 300.0f;
 	
 };

@@ -3,11 +3,17 @@
 
 #include "PrimaryRifle.h"
 
+#include "BarrelAttachment.h"
+#include "GripAttachment.h"
+#include "MagazineAttachment.h"
+#include "StockAttachment.h"
 #include "Target.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextBlock.h"
 #include "Engine/TextRenderActor.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APrimaryRifle::APrimaryRifle()
@@ -35,6 +41,19 @@ void APrimaryRifle::Tick(float DeltaTime)
 	playerRotation.Pitch *= -1;
 	//playerRotation.SetComponentForAxis(EAxis::Z, playerRotation.GetComponentForAxis(EAxis::Z) * -1);
 	SetActorRotation(playerRotation);
+	
+	
+	//movement speed
+	if (!IsAiming)
+	{
+		GetWorld()->GetFirstPlayerController()->GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+	}
+	else
+	{
+		GetWorld()->GetFirstPlayerController()->GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = AimWalkingSpeed;
+	}
+	
+	
 }
 
 void APrimaryRifle::FullAutoFire()
@@ -163,16 +182,22 @@ void APrimaryRifle::SpawnHitEffect(FVector spawnLocation, FHitResult hitResult)
 		spawnLocation = FVector(spawnLocation.X - 10, spawnLocation.Y, spawnLocation.Z);
 		if (hitActor->RecieveDamage(Damage))
 		{
-			/*ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
-			DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
-			DamageText->SetLifeSpan(3.0f);*/
+			if (DamageEnabled)
+			{
+				ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
+				DamageText->GetTextRender()->SetText(FText::AsNumber(Damage));
+				DamageText->SetLifeSpan(3.0f);
+			}
 			
 		}
 		else
 		{
-			/*ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
-			DamageText->GetTextRender()->SetText(FText::FromString("Dead"));
-			DamageText->SetLifeSpan(3.0f);*/
+			if (DamageEnabled)
+			{
+				ATextRenderActor* DamageText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), spawnLocation, textRotation);
+				DamageText->GetTextRender()->SetText(FText::FromString("Dead"));
+				DamageText->SetLifeSpan(3.0f);
+			}
 		}
 	}
 	else
@@ -206,14 +231,63 @@ FVector APrimaryRifle::BulletRecoilDirection()
 	}
 }
 
-void APrimaryRifle::InitializeStats()
+void APrimaryRifle::InitializeStats() //initializing defaults
 {
-	Damage = GunStats.Damage;
-	FireRate = GunStats.FireRate;
+	//Barrel
+	Damage = GunAttachments.BarrelArray[0]->Damage;
+	FireRate = GunAttachments.BarrelArray[0]->FireRate;
+	//Stock
+	MovementSpeed = GunAttachments.StockArray[0]->MovementSpeed;
+	AimWalkingSpeed = GunAttachments.StockArray[0]->AimWalkingSpeed;
+	//Grip
+	RecoilArray = GunAttachments.GripArray[0]->RecoilArray;
+	//Magazine
+	MaxAmmo = GunAttachments.MagazineArray[0]->AmmoCapacity;
+	ReloadSpeed = GunAttachments.MagazineArray[0]->ReloadSpeed;
+	
+	OnDamageChanged.Broadcast(Damage);
+	OnFireRateChanged.Broadcast(FireRate);
+	OnSpeedChanged.Broadcast(MovementSpeed);
+	OnAimSpeedChanged.Broadcast(AimWalkingSpeed);
+	OnAmmoCapacityChanged.Broadcast(MaxAmmo);
+	OnReloadSpeedChanged.Broadcast(ReloadSpeed);
+	
+	//Damage = GunStats.Damage;
+	//FireRate = GunStats.FireRate;
 	//movement speed
 	//aim movement speed
-	RecoilArray = GunStats.RecoilArray;
-	MaxAmmo = GunStats.AmmoCapacity;
-	ReloadSpeed = GunStats.ReloadSpeed;
+	//RecoilArray = GunStats.RecoilArray;
+	//MaxAmmo = GunStats.AmmoCapacity;
+	//ReloadSpeed = GunStats.ReloadSpeed;
+}
+
+void APrimaryRifle::ChangeAttachments(FString type, int index)//parameters: type (barrel, stock, etc); index #
+{
+	
+	if (type == "Barrel")
+	{
+		Damage = GunAttachments.BarrelArray[index]->Damage;
+		FireRate = GunAttachments.BarrelArray[index]->FireRate;
+		OnDamageChanged.Broadcast(Damage);
+		OnFireRateChanged.Broadcast(FireRate);
+	}
+	else if (type == "Magazine")
+	{
+		MaxAmmo = GunAttachments.MagazineArray[index]->AmmoCapacity;
+		ReloadSpeed = GunAttachments.MagazineArray[index]->ReloadSpeed;
+		OnAmmoCapacityChanged.Broadcast(MaxAmmo);
+		OnReloadSpeedChanged.Broadcast(ReloadSpeed);
+	}
+	else if (type == "Grip")
+	{
+		RecoilArray = GunAttachments.GripArray[index]->RecoilArray;
+	}
+	else if (type == "Stock")
+	{
+		MovementSpeed = GunAttachments.StockArray[index]->MovementSpeed;
+		AimWalkingSpeed = GunAttachments.StockArray[index]->AimWalkingSpeed;
+		OnSpeedChanged.Broadcast(MovementSpeed);
+		OnAimSpeedChanged.Broadcast(AimWalkingSpeed);
+	}
 }
 

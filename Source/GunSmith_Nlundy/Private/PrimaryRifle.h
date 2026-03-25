@@ -13,6 +13,12 @@ class UBarrelAttachment;
 class UGripAttachment;
 class UAttachmentSlot;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChanged, int32, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageChanged, int, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFireRateChanged, float, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSpeedChanged, float, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAimSpeedChanged, float, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoCapacityChanged, int, NewAmmoCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReloadSpeedChanged, float, NewAmmoCount);
 
 class UTextRenderComponent;
 
@@ -23,11 +29,23 @@ struct FGunStats
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int Damage = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FireRate = 0.1f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MovementSpeed = 75.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AimWalkingSpeed = 50.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MovementSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AimWalkingSpeed = 300.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FVector> RecoilArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int AmmoCapacity = 25;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReloadSpeed = 1.5f;
+	
+};
+
+USTRUCT(BlueprintType)
+struct FGunAttachments
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Attachment DataAssets") TArray<UGripAttachment*> GripArray;
+	UPROPERTY(EditAnywhere, Category = "Attachment DataAssets") TArray<UBarrelAttachment*> BarrelArray;
+	UPROPERTY(EditAnywhere, Category = "Attachment DataAssets") TArray<UMagazineAttachment*> MagazineArray;
+	UPROPERTY(EditAnywhere, Category = "Attachment DataAssets") TArray<UStockAttachment*> StockArray;
 	
 };
 
@@ -53,26 +71,38 @@ public:
 	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation, FHitResult hitResult);
 	UFUNCTION(BlueprintCallable) FVector BulletRecoilDirection();
 	UFUNCTION(BlueprintCallable) void InitializeStats();
+	UFUNCTION(BlueprintCallable) void ChangeAttachments(FString type, int index);
 	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
 	UPROPERTY() int CurrentAmmo = 0;
 	UPROPERTY() int MaxAmmo = 25;
 	UPROPERTY() float FireRate = 0.1f; //In Seconds
 	UPROPERTY() float ReloadSpeed = 1.5f; //In Seconds
+	UPROPERTY() float MovementSpeed = 600.0f;
+	UPROPERTY() float AimWalkingSpeed = 300.0f;
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle2;
 	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;
+	
+	//User Interface
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
 	UPROPERTY(BlueprintAssignable) FOnAmmoChanged OnAmmoChanged;
+	UPROPERTY(BlueprintAssignable) FOnDamageChanged OnDamageChanged;
+	UPROPERTY(BlueprintAssignable) FOnFireRateChanged OnFireRateChanged;
+	UPROPERTY(BlueprintAssignable) FOnSpeedChanged OnSpeedChanged;
+	UPROPERTY(BlueprintAssignable) FOnAimSpeedChanged OnAimSpeedChanged;
+	UPROPERTY(BlueprintAssignable) FOnAmmoCapacityChanged OnAmmoCapacityChanged;
+	UPROPERTY(BlueprintAssignable) FOnReloadSpeedChanged OnReloadSpeedChanged;
+	
 	UPROPERTY(EditAnywhere) int Damage = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool IsAiming = false;
 	UPROPERTY(EditAnywhere) bool IsReloading = false;
 	UPROPERTY() TArray<FVector> RecoilArray; //Holds vector offsets from original hit positon "(0,0)"
 	UPROPERTY(BlueprintReadWrite) int recoilCount = 0;
 	UPROPERTY(EditAnywhere, Category = "Gun Stats") FGunStats GunStats;
-	UPROPERTY(EditAnywhere, Category = "Arrays") TArray<UGripAttachment*> GripArray;
-	UPROPERTY(EditAnywhere, Category = "Arrays") TArray<UBarrelAttachment*> BarrelArray;
-	UPROPERTY(EditAnywhere, Category = "Arrays") TArray<UMagazineAttachment*> MagazineArray;
-	UPROPERTY(EditAnywhere, Category = "Arrays") TArray<UStockAttachment*> StockArray;
+	UPROPERTY(EditAnywhere, Category = "Gun Attachments") FGunAttachments GunAttachments;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool DamageEnabled = false;
+	
+	
 
 protected:
 	// Called when the game starts or when spawned
