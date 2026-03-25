@@ -95,7 +95,7 @@ public:
 	
 	UPROPERTY(EditAnywhere) int Damage = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool IsAiming = false;
-	UPROPERTY(EditAnywhere) bool IsReloading = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool IsReloading = false;
 	UPROPERTY() TArray<FVector> RecoilArray; //Holds vector offsets from original hit positon "(0,0)"
 	UPROPERTY(BlueprintReadWrite) int recoilCount = 0;
 	UPROPERTY(EditAnywhere, Category = "Gun Stats") FGunStats GunStats;
