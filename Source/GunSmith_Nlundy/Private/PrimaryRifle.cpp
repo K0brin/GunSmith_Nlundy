@@ -116,7 +116,6 @@ void APrimaryRifle::FireWeapon()
 		DecrementAmmo();
 		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %i"), CurrentAmmo);
 	}
-	
 }
 
 
