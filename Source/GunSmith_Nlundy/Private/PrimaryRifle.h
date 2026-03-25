@@ -58,30 +58,47 @@ class APrimaryRifle : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APrimaryRifle();
-	//Raycasts for bullets
-	//accuracy ^ goes along with that
-	//speed - stored locally, used to affect player speed
-	//magazine
+
+	//_______________________________________FUNCTIONS___________________________________________________
+	//Firing Weapon
 	UFUNCTION(BlueprintCallable) void FireWeapon();
 	UFUNCTION(BlueprintCallable) void FullAutoFire();
 	UFUNCTION(BlueprintCallable) void CancelFullAutoFire();
+
+	//Ammo / Reload
 	UFUNCTION(BlueprintCallable) void DecrementAmmo();
 	UFUNCTION(BlueprintCallable) void SetAmmoMax();
 	UFUNCTION(BlueprintCallable) void ManualReload();
+
+	//Hit Effect / Damage Indication
 	UFUNCTION(BlueprintCallable) void SpawnHitEffect(FVector spawnLocation, FHitResult hitResult);
+
+	//Recoil
 	UFUNCTION(BlueprintCallable) FVector BulletRecoilDirection();
+
+	//Data Management
 	UFUNCTION(BlueprintCallable) void InitializeStats();
 	UFUNCTION(BlueprintCallable) void ChangeAttachments(FString type, int index);
+
+
+	//_______________________________________PROPERTIES__________________________________________________
+	//Gun Functionality
 	UPROPERTY(EditAnywhere) int LineTraceDistance = 2000;
 	UPROPERTY() int CurrentAmmo = 0;
 	UPROPERTY() int MaxAmmo = 25;
+	UPROPERTY(EditAnywhere) int Damage = 10;
 	UPROPERTY() float FireRate = 0.1f; //In Seconds
 	UPROPERTY() float ReloadSpeed = 1.5f; //In Seconds
 	UPROPERTY() float MovementSpeed = 600.0f;
 	UPROPERTY() float AimWalkingSpeed = 300.0f;
+	UPROPERTY() TArray<FVector> RecoilArray; //Holds vector offsets from original hit positon "(0,0)"
+	UPROPERTY(BlueprintReadWrite) int recoilCount = 0;
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle;
 	UPROPERTY(EditAnywhere) FTimerHandle timerHandle2;
 	UPROPERTY(EditAnywhere) TSubclassOf<AActor> HitEffectToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool IsAiming = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool IsReloading = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool DamageEnabled = false;
 	
 	//User Interface
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) UUserWidget* PlayerUserInterface;
@@ -93,14 +110,9 @@ public:
 	UPROPERTY(BlueprintAssignable) FOnAmmoCapacityChanged OnAmmoCapacityChanged;
 	UPROPERTY(BlueprintAssignable) FOnReloadSpeedChanged OnReloadSpeedChanged;
 	
-	UPROPERTY(EditAnywhere) int Damage = 10;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool IsAiming = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool IsReloading = false;
-	UPROPERTY() TArray<FVector> RecoilArray; //Holds vector offsets from original hit positon "(0,0)"
-	UPROPERTY(BlueprintReadWrite) int recoilCount = 0;
+	//Structs
 	UPROPERTY(EditAnywhere, Category = "Gun Stats") FGunStats GunStats;
 	UPROPERTY(EditAnywhere, Category = "Gun Attachments") FGunAttachments GunAttachments;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool DamageEnabled = false;
 	
 	
 

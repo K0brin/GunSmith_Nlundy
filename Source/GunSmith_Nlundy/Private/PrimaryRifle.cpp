@@ -27,6 +27,7 @@ APrimaryRifle::APrimaryRifle()
 void APrimaryRifle::BeginPlay()
 {
 	Super::BeginPlay();
+	//Initialize default Data Assets
 	InitializeStats();
 	SetAmmoMax();
 	
@@ -36,14 +37,15 @@ void APrimaryRifle::BeginPlay()
 void APrimaryRifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//gun rotates with player
 	FRotator playerRotation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>()->GetComponentRotation();
 	playerRotation.Yaw += 180.0f;
 	playerRotation.Pitch *= -1;
-	//playerRotation.SetComponentForAxis(EAxis::Z, playerRotation.GetComponentForAxis(EAxis::Z) * -1);
 	SetActorRotation(playerRotation);
 	
 	
-	//movement speed
+	//setting movement speed
 	if (!IsAiming)
 	{
 		GetWorld()->GetFirstPlayerController()->GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
@@ -58,9 +60,9 @@ void APrimaryRifle::Tick(float DeltaTime)
 
 void APrimaryRifle::FullAutoFire()
 {
+	//initial shot for tap fire
 	FireWeapon();
-	//Delay and function call to shoot
-	//have a bool instead of true if I want to have a fire rate switch - true = full auto -> false = semi
+	//Wait until next shot
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &APrimaryRifle::FireWeapon, FireRate, true);
 }
 
@@ -101,49 +103,18 @@ void APrimaryRifle::FireWeapon()
 			}
 		}
 	
-	
-		//TODO:Second Raycast destination is wrong half of the time
+		//Single LineTrace from center of camera
 		FHitResult hitResult1;
-		//FHitResult hitResult;
 		FVector lineTraceStart = barrelTipLocation;
 		FVector playerLineStart = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>()->GetComponentLocation();
 		//calculating dynamic forward
 		FVector lineTraceEnd = lineTraceStart + (BulletRecoilDirection() * -LineTraceDistance);
-		//edit the direction of the cast for recoil
-		//call function on for each bullet - raycast is held here
-		//raycast from center of player (to get target position)
 		GetWorld()->LineTraceSingleByChannel (hitResult1, playerLineStart, lineTraceEnd,ECC_Visibility, params);
-		//AActor* hitActor1 = hitResult1.GetActor()->GetParentActor();
-		//DrawDebugLine(GetWorld(),playerLineStart, hitResult1.ImpactPoint, FColor::Green, false, 1.0f, 0, 2.0f);
-		//raycast from gun
-		//GetWorld()->LineTraceSingleByChannel(hitResult, lineTraceStart, hitResult1.ImpactPoint,ECC_Visibility, params);
-		//DrawDebugLine(GetWorld(),lineTraceStart, hitResult.ImpactPoint, FColor::Red, false, 1.0f, 0, 2.0f);
-		//AActor* hitActor = hitResult.GetActor();
 		
 		SpawnHitEffect(hitResult1.ImpactPoint, hitResult1);
 	
 		DecrementAmmo();
 		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %i"), CurrentAmmo);
-	
-		//auto-reload
-		/*if (CurrentAmmo <= 0 )
-		{
-			ManualReload();
-		}
-	
-		if (hitResult1.GetActor())
-		{
-			/*FString actor1Name = hitActor1->GetName();
-			UE_LOG(LogTemp, Warning, TEXT("Hit1 Actor: %s"), *actor1Name);
-			UE_LOG(LogTemp, Warning, TEXT("Hit1 Location: %s"), *hitResult1.Location.ToString());
-
-			UE_LOG(LogTemp, Warning, TEXT("Hit actor class: %s"), *hitResult1.GetActor()->GetClass()->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit1 Nothing"));
-			UE_LOG(LogTemp, Warning, TEXT("Hit1 Location: %s"), *hitResult1.Location.ToString());
-		}*/
 	}
 	
 }
@@ -167,7 +138,7 @@ void APrimaryRifle::SetAmmoMax()
 void APrimaryRifle::ManualReload()
 {
 	//call reload animation
-	//waiting time of reload]
+	//waiting time of reload
 	IsReloading = true;
 	recoilCount = 0;
 	GetWorld()->GetTimerManager().SetTimer(timerHandle2, this, &APrimaryRifle::SetAmmoMax, ReloadSpeed,false);
@@ -231,8 +202,11 @@ FVector APrimaryRifle::BulletRecoilDirection()
 	}
 }
 
-void APrimaryRifle::InitializeStats() //initializing defaults
+void APrimaryRifle::InitializeStats() //initializing default Data Assets
 {
+
+	//assigns default data asset values to hard code
+	
 	//Barrel
 	Damage = GunAttachments.BarrelArray[0]->Damage;
 	FireRate = GunAttachments.BarrelArray[0]->FireRate;
@@ -251,18 +225,12 @@ void APrimaryRifle::InitializeStats() //initializing defaults
 	OnAimSpeedChanged.Broadcast(AimWalkingSpeed);
 	OnAmmoCapacityChanged.Broadcast(MaxAmmo);
 	OnReloadSpeedChanged.Broadcast(ReloadSpeed);
-	
-	//Damage = GunStats.Damage;
-	//FireRate = GunStats.FireRate;
-	//movement speed
-	//aim movement speed
-	//RecoilArray = GunStats.RecoilArray;
-	//MaxAmmo = GunStats.AmmoCapacity;
-	//ReloadSpeed = GunStats.ReloadSpeed;
 }
 
-void APrimaryRifle::ChangeAttachments(FString type, int index)//parameters: type (barrel, stock, etc); index #
+void APrimaryRifle::ChangeAttachments(FString type, int index) //called when player changes attachment on UI
 {
+
+		//assigns data asset values to hard code
 	
 	if (type == "Barrel")
 	{
